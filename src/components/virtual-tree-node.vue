@@ -16,14 +16,23 @@
     :aria-disabled="node.disabled"
     :aria-checked="node.checked"
     :draggable="tree.draggable"
-    @click.stop="handleClick"
+    @click="handleClick($event)"
     @contextmenu="$event => this.handleContextMenu($event)"
     @dragstart.stop="handleDragStart"
     @dragover.stop="handleDragOver"
     @dragend.stop="handleDragEnd"
     @drop.stop="handleDrop"
   >
-    <div class="el-tree-node__content">
+    <div class="el-tree-node__content" :style="`height: ${itemSize}px;`">
+      <el-checkbox
+        v-if="showCheckbox"
+        v-model="node.checked"
+        :indeterminate="node.indeterminate"
+        :disabled="!!node.disabled"
+        @click.native.stop
+        @change="handleCheckChange"
+        @clickCheck="handleCheckClick"
+      ></el-checkbox>
       <span
         aria-hidden="true"
         :style="{
@@ -34,22 +43,24 @@
         :class="[
           {
             'is-leaf': node.isLeaf,
-            expanded: !node.isLeaf && expanded
+            expanded: !node.isLeaf && expanded,
           },
+          `level${node.level}`,
           'el-tree-node__expand-icon',
           'el-tree-node__expand-icon-no-transition',
           tree.iconClass ? tree.iconClass : 'el-icon-caret-right'
         ]"
         @click.stop="handleExpandIconClick"
       ></span>
-      <el-checkbox
+<!--       <el-checkbox
         v-if="showCheckbox"
         v-model="node.checked"
         :indeterminate="node.indeterminate"
         :disabled="!!node.disabled"
         @click.native.stop
         @change="handleCheckChange"
-      ></el-checkbox>
+        @clickCheck="handleCheckClick"
+      ></el-checkbox> -->
       <span
         v-if="node.loading"
         class="el-tree-node__loading-icon el-icon-loading"
@@ -109,7 +120,11 @@ export default {
     showCheckbox: {
       type: Boolean,
       default: false
-    }
+    },
+    itemSize: {
+      type: Number,
+      default: 26
+    },
   },
 
   data() {

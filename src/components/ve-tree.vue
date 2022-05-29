@@ -18,14 +18,14 @@
       }"
       key-field="key"
       :items="dataList"
-      :item-size="26"
+      :item-size="itemSize"
       :buffer="50"
       v-slot="{ active,item }"
     >
       <ElTreeVirtualNode
         v-if="active"
-        style="height: 26px;"
         :node="item"
+        :item-size="itemSize"
         :renderContent="renderContent"
         :showCheckbox="showCheckbox"
         :render-after-expand="renderAfterExpand"
@@ -153,7 +153,11 @@ export default {
     keeps: {
       type: Number,
       default: 40
-    } // 计算希望渲染的tree节点数
+    }, // 计算希望渲染的tree节点数
+    itemSize: {
+      type: Number,
+      default: 26
+    },
   },
 
   data() {
@@ -198,10 +202,6 @@ export default {
 
     dataList() {
       const a = this.smoothTree(this.root.childNodes);
-      const b = [];
-      a.forEach(e => {
-        b.push(e.key);
-      });
       return a;
     }
   },
@@ -304,12 +304,20 @@ export default {
       this.store.setCheckedKeys(keys, leafOnly);
     },
 
+    setCheckedLeafKeys(keys) {
+      this.store.setCheckedLeafKeys(keys);
+    },
+
     setChecked(data, checked, deep) {
       this.store.setChecked(data, checked, deep);
     },
 
     setCheckedAll(checked = true) {
       this.store.setCheckedAll(checked);
+    },
+
+    setExpandAll(expand = true) {
+      this.store.setExpandAll(expand);
     },
 
     getHalfCheckedNodes() {
@@ -412,7 +420,7 @@ export default {
         ev.preventDefault();
         hasInput.click();
       }
-    }
+    },
   },
 
   created() {

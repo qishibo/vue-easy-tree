@@ -1,7 +1,7 @@
 {
-    "name": "@wchbrad/vue-easy-tree",
-    "description": "A Vue.js project",
-    "version": "1.0.8",
+    "name": "@qii404/vue-easy-tree",
+    "description": "Forked from @wchbrad/vue-easy-tree, modified just for ARDM, you may not need it.",
+    "version": "1.0.9",
     "author": "wchbrad <chao.wu.brad@foxmail.com>",
     "license": "MIT",
     "private": false,

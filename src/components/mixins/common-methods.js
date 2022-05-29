@@ -18,7 +18,8 @@ export default {
             const childrenKey = props["children"] || "children";
 
             this.$watch(`node.data.${childrenKey}`, () => {
-                this.node.updateChildren();
+                // remove this for better performance
+                // this.node.updateChildren();
             });
 
             if (this.node.expanded) {
@@ -76,7 +77,7 @@ export default {
             this.indeterminate = indeterminate;
         },
 
-        handleClick() {
+        handleClick(event) {
             const node = this.node;
             const store = this.tree.store;
 
@@ -96,7 +97,7 @@ export default {
                 });
             }
 
-            this.tree.$emit("node-click", node.data, node, this);
+            this.tree.$emit("node-click", node.data, node, this, event);
         },
 
         handleContextMenu(event) {
@@ -138,6 +139,10 @@ export default {
                     halfCheckedKeys: store.getHalfCheckedKeys(),
                 });
             });
+        },
+
+        handleCheckClick(event) {
+            this.tree.$emit("click-check", event);
         },
 
         handleChildNodeExpand(nodeData, node, instance) {

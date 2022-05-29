@@ -309,6 +309,16 @@ export default class TreeStore {
         this._setCheckedKeys(key, leafOnly, checkedKeys);
     }
 
+    setCheckedLeafKeys(keys) {
+      for (let key of keys) {
+        const node = this.nodesMap[key];
+        node.checked = true;
+        node.indeterminate = false;
+      }
+
+      this._initCheckRecursive(this.root);
+    }
+
     setDefaultExpandedKeys(keys) {
         keys = keys || [];
         this.defaultExpandedKeys = keys;
@@ -333,6 +343,14 @@ export default class TreeStore {
       for (const node of allNodes) {
         node.indeterminate = false;
         node.checked = checked;
+      }
+    }
+
+    setExpandAll(expand = true) {
+      const allNodes = this._getAllNodes();
+
+      for (const node of allNodes) {
+        node.expanded = expand;
       }
     }
 
@@ -365,5 +383,52 @@ export default class TreeStore {
         if (node) {
             this.setCurrentNode(node);
         }
+    }
+
+    _initCheckRecursive(startNode) {
+      // leaf
+      if (startNode.isLeaf) {
+        return;
+      }
+
+      for (let child of startNode.childNodes) {
+        this._initCheckRecursive(child);
+      }
+
+      let { all, none, half } = this._getChildState(startNode.childNodes);
+
+      if (all) {
+        startNode.checked = true;
+        startNode.indeterminate = false;
+      }
+      else if (none) {
+        startNode.checked = false;
+        startNode.indeterminate = false;
+      }
+      else {
+        startNode.checked = false;
+        startNode.indeterminate = true;
+      }
+    }
+
+    _getChildState(childNodes) {
+      let all = true;
+      let none = true;
+
+      for (let node of childNodes) {
+        if (node.checked) {
+          none = false;
+        }
+        else if (node.indeterminate) {
+          all = false;
+          none = false;
+          break;
+        }
+        else {
+          all = false;
+        }
+      }
+
+      return { all, none, half: !all && !none };
     }
 }

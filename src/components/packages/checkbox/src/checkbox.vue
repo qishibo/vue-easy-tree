@@ -33,6 +33,7 @@
         :false-value="falseLabel"
         v-model="model"
         @change="handleChange"
+        @click="handleClick($event)"
         @focus="focus = true"
         @blur="focus = false"
       />
@@ -46,6 +47,7 @@
         :name="name"
         v-model="model"
         @change="handleChange"
+        @click="handleClick($event)"
         @focus="focus = true"
         @blur="focus = false"
       />
@@ -194,6 +196,9 @@ export default {
           ]);
         }
       });
+    },
+    handleClick(event) {
+      this.$emit("clickCheck", event);
     }
   },
   created() {
