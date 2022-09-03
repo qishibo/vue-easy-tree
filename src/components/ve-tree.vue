@@ -25,6 +25,7 @@
       <ElTreeVirtualNode
         v-if="active"
         :node="item"
+        :uniq-key="item.key"
         :item-size="itemSize"
         :renderContent="renderContent"
         :showCheckbox="showCheckbox"
@@ -408,7 +409,7 @@ export default {
         this.treeItemArray[nextIndex].focus(); // 选中
       }
       // 始终使用箭头，避免expand-on-click-node=false时不展开
-      const expandIcon = currentItem.querySelector('[class*="el-icon-"]');
+      const expandIcon = currentItem.querySelector('.el-tree-node__expand-icon:not(.is-leaf)');
       if ([37, 39].indexOf(keyCode) > -1 && expandIcon) {
         // left、right 展开
         ev.preventDefault();
@@ -419,6 +420,14 @@ export default {
         // space enter选中checkbox
         ev.preventDefault();
         hasInput.click();
+      }
+
+      // emit keydown event
+      const dom = nextIndex !== undefined ? this.treeItemArray[nextIndex] : currentItem;
+      if (dom.hasAttribute("uniq-key")) {
+        const key = dom.getAttribute("uniq-key");
+        const node = this.store.getNode(key);
+        this.$emit("node-keydown", node, ev);
       }
     },
   },
